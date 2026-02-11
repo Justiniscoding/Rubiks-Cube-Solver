@@ -155,7 +155,74 @@ void Cube::print() {
 	std::cout << output;
 }
 
-void Cube::rotateSide(CubeMove *move) {}
+void Cube::cycleCorners(uint8_t corner1, uint8_t corner2, uint8_t corner3,
+						uint8_t corner4) {
+	uint8_t temp = cornerPermutation[corner1];
+
+	cornerPermutation[corner1] = cornerPermutation[corner2];
+	cornerPermutation[corner2] = cornerPermutation[corner3];
+	cornerPermutation[corner3] = cornerPermutation[corner4];
+	cornerPermutation[corner4] = temp;
+}
+
+void Cube::doubleSwapCorners(uint8_t corner1, uint8_t corner2, uint8_t corner3,
+							 uint8_t corner4) {
+	uint8_t temp = cornerPermutation[corner1];
+	uint8_t temp2 = cornerPermutation[corner3];
+
+	cornerPermutation[corner1] = cornerPermutation[corner2];
+	cornerPermutation[corner2] = temp;
+	cornerPermutation[corner3] = cornerPermutation[corner4];
+	cornerPermutation[corner4] = temp2;
+}
+
+void Cube::cycleEdges(uint8_t edge1, uint8_t edge2, uint8_t edge3,
+					  uint8_t edge4) {
+	uint8_t temp = edgePermutation[edge1];
+
+	edgePermutation[edge1] = edgePermutation[edge2];
+	edgePermutation[edge2] = edgePermutation[edge3];
+	edgePermutation[edge3] = edgePermutation[edge4];
+	edgePermutation[edge4] = temp;
+}
+
+void Cube::doubleSwapEdges(uint8_t edge1, uint8_t edge2, uint8_t edge3,
+						   uint8_t edge4) {
+	uint8_t temp = edgePermutation[edge1];
+	uint8_t temp2 = edgePermutation[edge3];
+
+	edgePermutation[edge1] = edgePermutation[edge2];
+	edgePermutation[edge2] = temp;
+	edgePermutation[edge3] = edgePermutation[edge4];
+	edgePermutation[edge4] = temp2;
+}
+
+void Cube::addToCorners(uint8_t corner1, uint8_t corner2, uint8_t corner3,
+						uint8_t corner4, uint8_t num1, uint8_t num2,
+						uint8_t num3, uint8_t num4) {
+	uint8_t temp = cornerOrientation[corner1];
+	cornerOrientation[corner1] = cornerOrientation[corner2] + num1;
+	cornerOrientation[corner2] = cornerOrientation[corner3] + num2;
+	cornerOrientation[corner3] = cornerOrientation[corner4] + num3;
+	cornerOrientation[corner4] = temp + num4;
+}
+
+void Cube::rotateSide(CubeMove *move) {
+	if (move->side == RIGHT) {
+		if (move->amount == 1) {
+			cycleCorners(6, 1, 2, 5);
+			cycleEdges(9, 6, 1, 5);
+			addToCorners(1, 2, 5, 6, 2, 1, 2, 1);
+		} else if (move->amount == 2) {
+			doubleSwapCorners(2, 6, 1, 5);
+			doubleSwapEdges(1, 9, 6, 5);
+		} else if (move->amount == 3) {
+			cycleCorners(5, 2, 1, 6);
+			cycleEdges(9, 5, 1, 6);
+			addToCorners(1, 2, 5, 6, 2, 1, 2, 1);
+		}
+	}
+}
 
 bool CubeMove::isCompatible(CubeMove *move) {
 	if (this->side == move->side) {

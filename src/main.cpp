@@ -5,7 +5,7 @@ int main(int argc, char *argv[]) {
 
 	CubeMove move;
 
-	move.side = RIGHT;
+	move.side = LEFT;
 	move.amount = 1;
 
 	rubiksCube.rotateSide(&move);
