@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <stdint.h>
 #include <string>
 
@@ -32,18 +33,17 @@ struct Cube {
 	std::string getPiece(PieceType type, uint8_t pieceIndex, uint8_t faceIndex);
 
 	void cycleCorners(uint8_t corner1, uint8_t corner2, uint8_t corner3,
-					  uint8_t corner4);
+					  uint8_t corner4, bool rotateFaces);
 
 	void doubleSwapCorners(uint8_t corner1, uint8_t corner2, uint8_t corner3,
 						   uint8_t corner4);
 
 	void cycleEdges(uint8_t edge1, uint8_t edge2, uint8_t edge3, uint8_t edge4);
+	void cycleEdges(uint8_t edge1, uint8_t edge2, uint8_t edge3, uint8_t edge4,
+					bool flipEdges);
 	void doubleSwapEdges(uint8_t edge1, uint8_t edge2, uint8_t edge3,
 						 uint8_t edge4);
-
-	void addToCorners(uint8_t corner1, uint8_t corner2, uint8_t corner3,
-					  uint8_t corner4, uint8_t num1, uint8_t num2, uint8_t num3,
-					  uint8_t num4);
+	void executeMoves(std::string moves);
 
 	void print();
 	void rotateSide(CubeMove *move);

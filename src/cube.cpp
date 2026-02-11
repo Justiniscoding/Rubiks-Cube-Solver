@@ -156,13 +156,21 @@ void Cube::print() {
 }
 
 void Cube::cycleCorners(uint8_t corner1, uint8_t corner2, uint8_t corner3,
-						uint8_t corner4) {
+						uint8_t corner4, bool rotateFaces) {
 	uint8_t temp = cornerPermutation[corner1];
 
 	cornerPermutation[corner1] = cornerPermutation[corner2];
 	cornerPermutation[corner2] = cornerPermutation[corner3];
 	cornerPermutation[corner3] = cornerPermutation[corner4];
 	cornerPermutation[corner4] = temp;
+
+	if (rotateFaces) {
+		uint8_t tempO = cornerOrientation[corner1];
+		cornerOrientation[corner1] = cornerOrientation[corner2] + 1;
+		cornerOrientation[corner2] = cornerOrientation[corner3] + 2;
+		cornerOrientation[corner3] = cornerOrientation[corner4] + 1;
+		cornerOrientation[corner4] = tempO + 2;
+	}
 }
 
 void Cube::doubleSwapCorners(uint8_t corner1, uint8_t corner2, uint8_t corner3,
@@ -186,6 +194,16 @@ void Cube::cycleEdges(uint8_t edge1, uint8_t edge2, uint8_t edge3,
 	edgePermutation[edge4] = temp;
 }
 
+void Cube::cycleEdges(uint8_t edge1, uint8_t edge2, uint8_t edge3,
+					  uint8_t edge4, bool flipEdges) {
+	cycleEdges(edge1, edge2, edge3, edge4);
+
+	edgeOrientation[edge1]++;
+	edgeOrientation[edge2]++;
+	edgeOrientation[edge3]++;
+	edgeOrientation[edge4]++;
+}
+
 void Cube::doubleSwapEdges(uint8_t edge1, uint8_t edge2, uint8_t edge3,
 						   uint8_t edge4) {
 	uint8_t temp = edgePermutation[edge1];
@@ -197,29 +215,50 @@ void Cube::doubleSwapEdges(uint8_t edge1, uint8_t edge2, uint8_t edge3,
 	edgePermutation[edge4] = temp2;
 }
 
-void Cube::addToCorners(uint8_t corner1, uint8_t corner2, uint8_t corner3,
-						uint8_t corner4, uint8_t num1, uint8_t num2,
-						uint8_t num3, uint8_t num4) {
-	uint8_t temp = cornerOrientation[corner1];
-	cornerOrientation[corner1] = cornerOrientation[corner2] + num1;
-	cornerOrientation[corner2] = cornerOrientation[corner3] + num2;
-	cornerOrientation[corner3] = cornerOrientation[corner4] + num3;
-	cornerOrientation[corner4] = temp + num4;
-}
-
 void Cube::rotateSide(CubeMove *move) {
 	if (move->side == RIGHT) {
 		if (move->amount == 1) {
-			cycleCorners(6, 1, 2, 5);
+			cycleCorners(6, 1, 2, 5, true);
 			cycleEdges(9, 6, 1, 5);
-			addToCorners(1, 2, 5, 6, 2, 1, 2, 1);
 		} else if (move->amount == 2) {
 			doubleSwapCorners(2, 6, 1, 5);
 			doubleSwapEdges(1, 9, 6, 5);
 		} else if (move->amount == 3) {
-			cycleCorners(5, 2, 1, 6);
+			cycleCorners(2, 1, 6, 5, true);
 			cycleEdges(9, 5, 1, 6);
-			addToCorners(1, 2, 5, 6, 2, 1, 2, 1);
+		}
+	} else if (move->side == LEFT) {
+		if (move->amount == 1) {
+			cycleCorners(4, 3, 0, 7, true);
+			cycleEdges(11, 4, 3, 7);
+		} else if (move->amount == 2) {
+			doubleSwapCorners(0, 4, 3, 7);
+			doubleSwapEdges(3, 11, 4, 7);
+		} else if (move->amount == 3) {
+			cycleCorners(4, 7, 0, 3, true);
+			cycleEdges(3, 4, 11, 7);
+		}
+	} else if (move->side == UP) {
+		if (move->amount == 1) {
+			cycleCorners(1, 0, 3, 2, false);
+			cycleEdges(1, 0, 3, 2);
+		} else if (move->amount == 2) {
+			doubleSwapEdges(0, 2, 1, 3);
+			doubleSwapCorners(0, 2, 1, 3);
+		} else if (move->amount == 3) {
+			cycleCorners(1, 2, 3, 0, false);
+			cycleEdges(1, 2, 3, 0);
+		}
+	} else if (move->side == FRONT) {
+		if (move->amount == 1) {
+			cycleCorners(3, 4, 5, 2, true);
+			cycleEdges(2, 4, 8, 5, true);
+		} else if (move->amount == 2) {
+			doubleSwapCorners(3, 5, 4, 2);
+			doubleSwapEdges(2, 8, 4, 5);
+		} else if (move->amount == 3) {
+			cycleCorners(5, 4, 3, 2, true);
+			cycleEdges(8, 4, 2, 5, true);
 		}
 	}
 }
@@ -230,4 +269,40 @@ bool CubeMove::isCompatible(CubeMove *move) {
 	}
 
 	return true;
+}
+
+void Cube::executeMoves(std::string moves) {
+	CubeMove move;
+
+	for (int i = 0; i < moves.length(); i++) {
+		char s = moves[i];
+
+		if (s == 'R') {
+			move.side = RIGHT;
+		} else if (s == 'L') {
+			move.side = LEFT;
+		} else if (s == 'F') {
+			move.side = FRONT;
+		} else if (s == 'B') {
+			move.side = BACK;
+		} else if (s == 'D') {
+			move.side = DOWN;
+		} else if (s == 'U') {
+			move.side = UP;
+		}
+
+		if (s == '2') {
+			move.amount = 2;
+		}
+		if (s == '\'') {
+			move.amount = 3;
+		}
+
+		if (s == ' ' || i == moves.length() - 1) {
+			std::cout << "Executing move on side " << move.side
+					  << " and amount " << unsigned(move.amount) << " \n";
+			rotateSide(&move);
+			move.amount = 1;
+		}
+	}
 }
