@@ -8,6 +8,7 @@ int main(int argc, char *argv[]) {
 	srand(time(0));
 
 	rubiksCube.randomScramble();
+	rubiksCube.thistlethwaite();
 
 	rubiksCube.print();
 
@@ -21,13 +22,16 @@ int main(int argc, char *argv[]) {
 			break;
 		}
 
+		if (input == "solve") {
+			rubiksCube.thistlethwaite();
+		}
+
 		if (input == "clear") {
 			std::cout << "\x1b[2J\x1b[H";
 		} else {
 			rubiksCube.executeMoves(input);
-
-			rubiksCube.print();
 		}
+		rubiksCube.print();
 	}
 
 	return 0;

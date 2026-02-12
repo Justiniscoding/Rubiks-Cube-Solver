@@ -344,12 +344,29 @@ void Cube::executeMoves(std::string moves) {
 }
 
 void Cube::randomScramble() {
-	CubeMove move;
+	CubeMove lastMove;
 
 	for (int i = 0; i < 20; i++) {
-		move.amount = rand() % 3;
-		move.side = static_cast<CubeSide>(rand() % 6);
+		CubeMove move;
+		do {
+			move.amount = rand() % 3;
+			move.side = static_cast<CubeSide>(rand() % 6);
+		} while (!move.isCompatible(&lastMove));
+
+		lastMove = move;
 
 		rotateSide(&move);
 	}
+}
+
+// Solve the cube using thistlethwaite's algorithm.
+void Cube::thistlethwaite() {
+	int bad = 0;
+	for (int i = 0; i < 12; i++) {
+		if (edgeOrientation[i] % 2 != 0) {
+			bad++;
+		}
+	}
+
+	std::cout << "There are " << bad << " bad edges!\n";
 }

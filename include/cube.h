@@ -46,6 +46,7 @@ struct Cube {
 						 uint8_t edge4);
 	void executeMoves(std::string moves);
 	void randomScramble();
+	void thistlethwaite();
 
 	void print();
 	void rotateSide(CubeMove *move);
