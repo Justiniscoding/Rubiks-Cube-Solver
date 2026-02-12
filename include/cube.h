@@ -45,6 +45,7 @@ struct Cube {
 	void doubleSwapEdges(uint8_t edge1, uint8_t edge2, uint8_t edge3,
 						 uint8_t edge4);
 	void executeMoves(std::string moves);
+	void randomScramble();
 
 	void print();
 	void rotateSide(CubeMove *move);

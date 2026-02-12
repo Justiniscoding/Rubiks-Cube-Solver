@@ -1,5 +1,6 @@
 #include "cube.h"
 #include <cstdint>
+#include <cstdlib>
 #include <iostream>
 
 Cube Cube::create() {
@@ -339,5 +340,16 @@ void Cube::executeMoves(std::string moves) {
 			rotateSide(&move);
 			move.amount = 1;
 		}
+	}
+}
+
+void Cube::randomScramble() {
+	CubeMove move;
+
+	for (int i = 0; i < 20; i++) {
+		move.amount = rand() % 3;
+		move.side = static_cast<CubeSide>(rand() % 6);
+
+		rotateSide(&move);
 	}
 }

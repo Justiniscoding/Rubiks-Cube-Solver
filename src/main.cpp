@@ -1,39 +1,34 @@
+#include <cstdlib>
 #include <cube.h>
 #include <iostream>
 
 int main(int argc, char *argv[]) {
 	Cube rubiksCube = Cube::create();
 
-	// while (true) {
-	// 	std::cout << "Please enter some moves: ";
-	//
-	// 	std::string input;
-	// 	std::cin >> input;
-	//
-	// 	if (input == "quit") {
-	// 		break;
-	// 	}
-	//
-	// 	if (input == "clear") {
-	// 		std::cout << "\x1b[2J\x1b[H";
-	// 	} else {
-	// 		rubiksCube.executeMoves(input);
-	//
-	// 		rubiksCube.print();
-	// 	}
-	// }
+	srand(time(0));
 
-	std::cout << "First t perm:\n";
-
-	rubiksCube.executeMoves("R U R' U' R' F R2 U' R' U' R U R' F'");
+	rubiksCube.randomScramble();
 
 	rubiksCube.print();
 
-	std::cout << "Second t perm:\n";
+	while (true) {
+		std::cout << "Please enter some moves: ";
 
-	rubiksCube.executeMoves("R U R' U' R' F R2 U' R' U' R U R' F'");
+		std::string input;
+		std::cin >> input;
 
-	rubiksCube.print();
+		if (input == "quit") {
+			break;
+		}
+
+		if (input == "clear") {
+			std::cout << "\x1b[2J\x1b[H";
+		} else {
+			rubiksCube.executeMoves(input);
+
+			rubiksCube.print();
+		}
+	}
 
 	return 0;
 }
