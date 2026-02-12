@@ -23,22 +23,15 @@ int main(int argc, char *argv[]) {
 	// 	}
 	// }
 
-	CubeMove move;
+	std::cout << "First t perm:\n";
 
-	move.amount = 1;
-	move.side = RIGHT;
+	rubiksCube.executeMoves("R U R' U' R' F R2 U' R' U' R U R' F'");
 
-	rubiksCube.rotateSide(&move);
+	rubiksCube.print();
 
-	// std::cout << "First t perm:\n";
-	//
-	// rubiksCube.executeMoves("R U R' U' R' F R2 U' R' U' R U R' F'");
-	//
-	// rubiksCube.print();
-	//
-	// std::cout << "Second t perm:\n";
-	//
-	// rubiksCube.executeMoves("R U R' U' R' F R2 U' R' U' R U R' F'");
+	std::cout << "Second t perm:\n";
+
+	rubiksCube.executeMoves("R U R' U' R' F R2 U' R' U' R U R' F'");
 
 	rubiksCube.print();
 

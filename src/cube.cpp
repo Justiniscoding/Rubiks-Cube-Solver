@@ -164,13 +164,19 @@ void Cube::cycleCorners(uint8_t corner1, uint8_t corner2, uint8_t corner3,
 	cornerPermutation[corner3] = cornerPermutation[corner4];
 	cornerPermutation[corner4] = temp;
 
-	if (rotateFaces) {
-		uint8_t tempO = cornerOrientation[corner1];
-		cornerOrientation[corner1] = cornerOrientation[corner2] + 1;
-		cornerOrientation[corner2] = cornerOrientation[corner3] + 2;
-		cornerOrientation[corner3] = cornerOrientation[corner4] + 1;
-		cornerOrientation[corner4] = tempO + 2;
+	int num1 = 1;
+	int num2 = 2;
+
+	if (!rotateFaces) {
+		num1 = 0;
+		num2 = 0;
 	}
+
+	uint8_t tempO = cornerOrientation[corner1];
+	cornerOrientation[corner1] = cornerOrientation[corner2] + num1;
+	cornerOrientation[corner2] = cornerOrientation[corner3] + num2;
+	cornerOrientation[corner3] = cornerOrientation[corner4] + num1;
+	cornerOrientation[corner4] = tempO + num2;
 }
 
 void Cube::doubleSwapCorners(uint8_t corner1, uint8_t corner2, uint8_t corner3,
@@ -182,6 +188,15 @@ void Cube::doubleSwapCorners(uint8_t corner1, uint8_t corner2, uint8_t corner3,
 	cornerPermutation[corner2] = temp;
 	cornerPermutation[corner3] = cornerPermutation[corner4];
 	cornerPermutation[corner4] = temp2;
+
+	uint8_t tempO = cornerOrientation[corner1];
+	uint8_t temp2O = cornerOrientation[corner3];
+
+	cornerOrientation[corner1] = cornerOrientation[corner2];
+	cornerOrientation[corner2] = tempO;
+
+	cornerOrientation[corner3] = cornerOrientation[corner4];
+	cornerOrientation[corner4] = temp2O;
 }
 
 void Cube::cycleEdges(uint8_t edge1, uint8_t edge2, uint8_t edge3,
@@ -299,8 +314,6 @@ void Cube::executeMoves(std::string moves) {
 		}
 
 		if (s == ' ' || i == moves.length() - 1) {
-			std::cout << "Executing move on side " << move.side
-					  << " and amount " << unsigned(move.amount) << " \n";
 			rotateSide(&move);
 			move.amount = 1;
 		}

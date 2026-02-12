@@ -9,6 +9,7 @@ static std::string edges[] = {"UB", "UR", "UF", "UL", "FL", "FR",
 
 static std::string corners[] = {"ULB", "UBR", "URF", "UFL",
 								"DLF", "DFR", "DRB", "DBL"};
+
 enum CubeColor { ORANGE, RED, WHITE, YELLOW, BLUE, GREEN };
 
 enum CubeSide { RIGHT, LEFT, UP, DOWN, BACK, FRONT };
