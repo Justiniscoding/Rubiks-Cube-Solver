@@ -275,6 +275,28 @@ void Cube::rotateSide(CubeMove *move) {
 			cycleCorners(5, 4, 3, 2, true);
 			cycleEdges(8, 4, 2, 5, true);
 		}
+	} else if (move->side == BACK) {
+		if (move->amount == 1) {
+			cycleCorners(1, 6, 7, 0, true);
+			cycleEdges(0, 6, 10, 7, true);
+		} else if (move->amount == 2) {
+			doubleSwapCorners(1, 7, 0, 6);
+			doubleSwapEdges(0, 10, 6, 7);
+		} else if (move->amount == 3) {
+			cycleCorners(7, 6, 1, 0, true);
+			cycleEdges(10, 6, 0, 7, true);
+		}
+	} else if (move->side == DOWN) {
+		if (move->amount == 1) {
+			cycleCorners(4, 7, 6, 5, false);
+			cycleEdges(8, 11, 10, 9);
+		} else if (move->amount == 2) {
+			doubleSwapCorners(4, 6, 7, 5);
+			doubleSwapEdges(8, 10, 11, 9);
+		} else if (move->amount == 3) {
+			cycleCorners(6, 7, 4, 5, false);
+			cycleEdges(10, 11, 8, 9);
+		}
 	}
 }
 
