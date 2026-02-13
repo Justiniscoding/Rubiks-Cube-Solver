@@ -37,8 +37,6 @@ void loadPruningTable(const char *fileName, int *table, int tableSize) {
 
 	int stage = 0;
 
-	// int table[tableSize];
-
 	while (file.get(character)) {
 		if (stage == 0) {
 			if (character == ',') {
@@ -48,9 +46,6 @@ void loadPruningTable(const char *fileName, int *table, int tableSize) {
 			}
 		} else {
 			if (character == ';') {
-				// std::cout << "The string ofr the key is " << key
-				// 		  << " and the string for the value is " << value
-				// 		  << "\n";
 				stage = 0;
 				table[std::stoi(key)] = std::stoi(value);
 				key = "";
@@ -96,7 +91,8 @@ void generateThistlethwaiteTables() {
 		CubeMove move;
 		for (int i = 0; i < 18; i++) {
 			int side = i % 6;
-			int amount = i / 6;
+			int amount = i / 6 + 1;
+
 			move.side = static_cast<CubeSide>(side);
 			move.amount = amount;
 

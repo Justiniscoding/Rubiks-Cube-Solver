@@ -1,5 +1,7 @@
 #include "cube.h"
 #include "pruning.h"
+#include <algorithm>
+#include <cstddef>
 #include <cstdint>
 #include <cstdlib>
 #include <iostream>
@@ -15,6 +17,22 @@ Cube Cube::create() {
 	for (int i = 0; i < 8; i++) {
 		cube.cornerPermutation[i] = i;
 		cube.cornerOrientation[i] = 0;
+	}
+
+	return cube;
+}
+
+Cube Cube::clone() {
+	Cube cube;
+
+	for (int i = 0; i < 12; i++) {
+		cube.edgeOrientation[i] = edgeOrientation[i];
+		cube.edgePermutation[i] = edgePermutation[i];
+	}
+
+	for (int i = 0; i < 8; i++) {
+		cube.cornerOrientation[i] = cornerOrientation[i];
+		cube.cornerPermutation[i] = cornerPermutation[i];
 	}
 
 	return cube;
@@ -344,6 +362,32 @@ bool CubeMove::isCompatible(CubeMove *move) {
 	return true;
 }
 
+std::string CubeMove::toString() {
+	std::string moveString = "";
+
+	if (side == RIGHT) {
+		moveString += "R";
+	} else if (side == LEFT) {
+		moveString += "L";
+	} else if (side == UP) {
+		moveString += "U";
+	} else if (side == DOWN) {
+		moveString += "D";
+	} else if (side == FRONT) {
+		moveString += "F";
+	} else if (side == BACK) {
+		moveString += "B";
+	}
+
+	if (amount == 2) {
+		moveString += "2";
+	} else if (amount == 3) {
+		moveString += "'";
+	}
+
+	return moveString;
+}
+
 void Cube::executeMoves(std::string moves) {
 	CubeMove move;
 
@@ -384,7 +428,7 @@ void Cube::randomScramble() {
 	for (int i = 0; i < 20; i++) {
 		CubeMove move;
 		do {
-			move.amount = rand() % 3;
+			move.amount = rand() % 3 + 1;
 			move.side = static_cast<CubeSide>(rand() % 6);
 		} while (!move.isCompatible(&lastMove));
 
@@ -394,10 +438,74 @@ void Cube::randomScramble() {
 	}
 }
 
+std::string Cube::thistlethwaiteGroup1(int *pruningTable, int depth,
+									   std::string solution,
+									   CubeSide lastSide) {
+	if (depth == 0) {
+		for (int i = 0; i < 12; i++) {
+			if (edgeOrientation[i] != 0) {
+				return "";
+			}
+		}
+
+		return solution.substr(1, solution.length());
+	} else if (depth > 0) {
+		int t = 0;
+
+		for (int i = 0; i < 11; i++) {
+			t *= 2;
+			t += edgeOrientation[i];
+		}
+
+		if (pruningTable[t] <= depth) {
+			CubeMove move;
+
+			for (int i = 0; i < 18; i++) {
+				int side = i % 6;
+				int amount = i / 6 + 1;
+
+				// TODO: improve this by using a transition table instead of
+				// having to simulate a move for every possible branch. A
+				// transition table takes the encoded t value and turns it into
+				// a new one without having to create a new cube for every move.
+				move.side = static_cast<CubeSide>(side);
+
+				if (move.side == lastSide) {
+					continue;
+				}
+
+				move.amount = amount;
+
+				Cube newCube = clone();
+
+				newCube.rotateSide(&move);
+
+				std::string result = newCube.thistlethwaiteGroup1(
+					pruningTable, depth - 1, solution + " " + move.toString(),
+					move.side);
+
+				if (result != "") {
+					return result;
+				}
+			}
+		}
+	}
+
+	return "";
+}
+
 // Solve the cube using Thistlethwaite's algorithm.
 void Cube::thistlethwaite() {
 	int g1[2048];
 	loadPruningTable("./tables/thistleg1", g1, 2048);
+
+	for (int i = 0; i < 13; i++) {
+		std::string solution = thistlethwaiteGroup1(g1, i, "", NONE);
+		if (solution != "") {
+			executeMoves(solution);
+			break;
+		}
+	}
 }
 
 // Solve the cube using Kociemba's algorithm.

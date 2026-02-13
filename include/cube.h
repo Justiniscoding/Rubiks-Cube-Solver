@@ -12,7 +12,7 @@ static std::string corners[] = {"ULB", "UBR", "URF", "UFL",
 
 enum CubeColor { ORANGE, RED, WHITE, YELLOW, BLUE, GREEN };
 
-enum CubeSide { RIGHT, LEFT, UP, DOWN, BACK, FRONT };
+enum CubeSide { RIGHT, LEFT, UP, DOWN, BACK, FRONT, NONE };
 
 enum PieceType { CORNER, EDGE };
 
@@ -21,6 +21,7 @@ struct CubeMove {
 	uint8_t amount;
 
 	bool isCompatible(CubeMove *move);
+	std::string toString();
 };
 
 struct Cube {
@@ -30,6 +31,8 @@ struct Cube {
 	uint8_t cornerOrientation[8];
 
 	static Cube create();
+
+	Cube clone();
 
 	std::string getPiece(PieceType type, uint8_t pieceIndex, uint8_t faceIndex);
 
@@ -48,7 +51,10 @@ struct Cube {
 						 uint8_t edge4);
 	void executeMoves(std::string moves);
 	void randomScramble();
+
 	void thistlethwaite();
+	std::string thistlethwaiteGroup1(int *pruningTable, int depth,
+									 std::string solution, CubeSide lastSide);
 	void kociemba();
 
 	void print();
