@@ -39,6 +39,8 @@ struct Cube {
 	void doubleSwapCorners(uint8_t corner1, uint8_t corner2, uint8_t corner3,
 						   uint8_t corner4);
 
+	void updateEdge(uint8_t edge);
+	void updateCorner(uint8_t corner, uint8_t newValue);
 	void cycleEdges(uint8_t edge1, uint8_t edge2, uint8_t edge3, uint8_t edge4);
 	void cycleEdges(uint8_t edge1, uint8_t edge2, uint8_t edge3, uint8_t edge4,
 					bool flipEdges);
@@ -47,6 +49,7 @@ struct Cube {
 	void executeMoves(std::string moves);
 	void randomScramble();
 	void thistlethwaite();
+	void kociemba();
 
 	void print();
 	void rotateSide(CubeMove *move);

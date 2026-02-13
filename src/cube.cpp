@@ -156,6 +156,16 @@ void Cube::print() {
 	std::cout << output;
 }
 
+void Cube::updateCorner(uint8_t corner, uint8_t newValue) {
+	cornerOrientation[corner] = newValue;
+
+	if (cornerOrientation[corner] == 3) {
+		cornerOrientation[corner] = 0;
+	} else if (cornerOrientation[corner] == 4) {
+		cornerOrientation[corner] = 1;
+	}
+}
+
 void Cube::cycleCorners(uint8_t corner1, uint8_t corner2, uint8_t corner3,
 						uint8_t corner4, bool rotateFaces) {
 	uint8_t temp = cornerPermutation[corner1];
@@ -174,10 +184,10 @@ void Cube::cycleCorners(uint8_t corner1, uint8_t corner2, uint8_t corner3,
 	}
 
 	uint8_t tempO = cornerOrientation[corner1];
-	cornerOrientation[corner1] = cornerOrientation[corner2] + num1;
-	cornerOrientation[corner2] = cornerOrientation[corner3] + num2;
-	cornerOrientation[corner3] = cornerOrientation[corner4] + num1;
-	cornerOrientation[corner4] = tempO + num2;
+	updateCorner(corner1, cornerOrientation[corner2] + num1);
+	updateCorner(corner2, cornerOrientation[corner3] + num2);
+	updateCorner(corner3, cornerOrientation[corner4] + num1);
+	updateCorner(corner4, tempO + num2);
 }
 
 void Cube::doubleSwapCorners(uint8_t corner1, uint8_t corner2, uint8_t corner3,
@@ -193,11 +203,11 @@ void Cube::doubleSwapCorners(uint8_t corner1, uint8_t corner2, uint8_t corner3,
 	uint8_t tempO = cornerOrientation[corner1];
 	uint8_t temp2O = cornerOrientation[corner3];
 
-	cornerOrientation[corner1] = cornerOrientation[corner2];
-	cornerOrientation[corner2] = tempO;
+	updateCorner(corner1, cornerOrientation[corner2]);
+	updateCorner(corner2, tempO);
 
-	cornerOrientation[corner3] = cornerOrientation[corner4];
-	cornerOrientation[corner4] = temp2O;
+	updateCorner(corner3, cornerOrientation[corner4]);
+	updateCorner(corner4, temp2O);
 }
 
 void Cube::cycleEdges(uint8_t edge1, uint8_t edge2, uint8_t edge3,
@@ -210,14 +220,22 @@ void Cube::cycleEdges(uint8_t edge1, uint8_t edge2, uint8_t edge3,
 	edgePermutation[edge4] = temp;
 }
 
+void Cube::updateEdge(uint8_t edge) {
+	edgeOrientation[edge]++;
+
+	if (edgeOrientation[edge] == 2) {
+		edgeOrientation[edge] = 0;
+	}
+}
+
 void Cube::cycleEdges(uint8_t edge1, uint8_t edge2, uint8_t edge3,
 					  uint8_t edge4, bool flipEdges) {
 	cycleEdges(edge1, edge2, edge3, edge4);
 
-	edgeOrientation[edge1]++;
-	edgeOrientation[edge2]++;
-	edgeOrientation[edge3]++;
-	edgeOrientation[edge4]++;
+	updateEdge(edge1);
+	updateEdge(edge2);
+	updateEdge(edge3);
+	updateEdge(edge4);
 }
 
 void Cube::doubleSwapEdges(uint8_t edge1, uint8_t edge2, uint8_t edge3,
@@ -229,6 +247,15 @@ void Cube::doubleSwapEdges(uint8_t edge1, uint8_t edge2, uint8_t edge3,
 	edgePermutation[edge2] = temp;
 	edgePermutation[edge3] = edgePermutation[edge4];
 	edgePermutation[edge4] = temp2;
+
+	uint8_t tempO = edgeOrientation[edge1];
+	uint8_t temp2O = edgeOrientation[edge3];
+
+	edgeOrientation[edge1] = edgeOrientation[edge2];
+	edgeOrientation[edge2] = tempO;
+
+	edgeOrientation[edge3] = edgeOrientation[edge4];
+	edgeOrientation[edge4] = temp2O;
 }
 
 void Cube::rotateSide(CubeMove *move) {
@@ -359,14 +386,8 @@ void Cube::randomScramble() {
 	}
 }
 
-// Solve the cube using thistlethwaite's algorithm.
-void Cube::thistlethwaite() {
-	int bad = 0;
-	for (int i = 0; i < 12; i++) {
-		if (edgeOrientation[i] % 2 != 0) {
-			bad++;
-		}
-	}
+// Solve the cube using Thistlethwaite's algorithm.
+void Cube::thistlethwaite() {}
 
-	std::cout << "There are " << bad << " bad edges!\n";
-}
+// Solve the cube using Kociemba's algorithm.
+void Cube::kociemba() {}
