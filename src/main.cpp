@@ -1,17 +1,14 @@
 #include "cube.h"
-#include "pruning.h"
-
-#include <cstdlib>
-#include <iostream>
 
 int main(int argc, char *argv[]) {
 	Cube rubiksCube = Cube::create();
 
 	srand(time(0));
 
-	generateThistlethwaiteTables();
+	// generateThistlethwaiteTables();
 
-	// rubiksCube.randomScramble();
+	rubiksCube.randomScramble();
+	rubiksCube.thistlethwaite();
 	// rubiksCube.print();
 	// rubiksCube.kociemba();
 	// rubiksCube.print();

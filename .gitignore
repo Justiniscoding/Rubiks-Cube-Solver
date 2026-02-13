@@ -1,3 +1,4 @@
 .cache
 RubiksCubeSolver
 compile_commands.json
+.DS_Store
