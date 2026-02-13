@@ -1,4 +1,5 @@
 #include "cube.h"
+#include "pruning.h"
 #include <cstdint>
 #include <cstdlib>
 #include <iostream>
@@ -218,6 +219,13 @@ void Cube::cycleEdges(uint8_t edge1, uint8_t edge2, uint8_t edge3,
 	edgePermutation[edge2] = edgePermutation[edge3];
 	edgePermutation[edge3] = edgePermutation[edge4];
 	edgePermutation[edge4] = temp;
+
+	uint8_t tempO = edgeOrientation[edge1];
+
+	edgeOrientation[edge1] = edgeOrientation[edge2];
+	edgeOrientation[edge2] = edgeOrientation[edge3];
+	edgeOrientation[edge3] = edgeOrientation[edge4];
+	edgeOrientation[edge4] = tempO;
 }
 
 void Cube::updateEdge(uint8_t edge) {
@@ -387,7 +395,10 @@ void Cube::randomScramble() {
 }
 
 // Solve the cube using Thistlethwaite's algorithm.
-void Cube::thistlethwaite() {}
+void Cube::thistlethwaite() {
+	int g1[2048];
+	loadPruningTable("./tables/thistleg1", g1, 2048);
+}
 
 // Solve the cube using Kociemba's algorithm.
 void Cube::kociemba() {}
