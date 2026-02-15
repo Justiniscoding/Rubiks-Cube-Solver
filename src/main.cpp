@@ -1,21 +1,15 @@
 #include "cube.h"
+#include "pruning.h"
 
 int main(int argc, char *argv[]) {
 	Cube rubiksCube = Cube::create();
 
 	srand(time(0));
 
-	// generateThistlethwaiteTables();
-
-	// rubiksCube.randomScramble();
-	rubiksCube.executeMoves("U2 D2 L U2 L U B2 D L2 D2 U' B D2 U2 R2 B U2 R2 "
-							"B2 U2 F U2 F' L F2 U R' B' F' U2");
-
+	rubiksCube.randomScramble();
 	rubiksCube.print();
 	rubiksCube.thistlethwaite();
 	rubiksCube.print();
-	// rubiksCube.print();
-	// rubiksCube.kociemba();
 	// rubiksCube.print();
 
 	// while (true) {

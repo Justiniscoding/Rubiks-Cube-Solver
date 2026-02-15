@@ -57,6 +57,20 @@ void loadPruningTable(const char *fileName, int *table, int tableSize) {
 	}
 }
 
+long factorial(int n) {
+	long result = 1;
+
+	for (int i = 2; i <= n; i++) {
+		result *= i;
+	}
+
+	return result;
+}
+
+long nCr(int n, int r) {
+	return factorial(n) / (factorial(r) * factorial(n - r));
+}
+
 void generateThistlethwaiteTables() {
 	Cube cube = Cube::create();
 
@@ -96,24 +110,122 @@ void generateThistlethwaiteTables() {
 			move.side = static_cast<CubeSide>(side);
 			move.amount = amount;
 
-			cube.rotateSide(&move);
+			Cube newCube = cube.clone();
+
+			newCube.rotateSide(&move);
 
 			int t = 0;
 
 			for (int i = 0; i < 11; i++) {
 				t *= 2;
-				t += cube.edgeOrientation[i];
+				t += newCube.edgeOrientation[i];
 			}
 
 			if (distance[t] == -1) {
 				distance[t] = lastDist + 1;
 				sq.push(t);
 			}
-
-			move.amount = 4 - move.amount;
-			cube.rotateSide(&move);
 		}
 	}
 
 	writePruningTable(distance, 2048, "./tables/thistleg1");
+
+	cube = Cube::create();
+
+	int g2Distance[1082565];
+
+	for (int i = 0; i < 1082565; i++) {
+		g2Distance[i] = -1;
+	}
+
+	// 69 represents a cube with full oriented corners and edges in the e slice
+	g2Distance[69] = 0;
+	sq.push(69);
+
+	while (!sq.empty()) {
+		int num = sq.front();
+		sq.pop();
+
+		int lastDist = g2Distance[num];
+
+		int cornerIndex = num / 495;
+		int edgeIndex = num % 495;
+
+		int s = 0;
+
+		for (int i = 6; i >= 0; i--) {
+			cube.cornerOrientation[i] = num % 2;
+			s -= cube.cornerOrientation[i];
+			if (s < 0) {
+				s += 2;
+			}
+			num /= 2;
+		}
+		cube.cornerOrientation[7] = s;
+
+		int remaining = 4;
+
+		for (int i = 0; i < 12; i++) {
+			if (remaining == 0) {
+				cube.edgePermutation[i] = 0;
+				continue;
+			}
+
+			int count = nCr(11 - i, remaining);
+
+			if (edgeIndex < count) {
+				cube.edgePermutation[i] = 0;
+			} else {
+				// Set the edge as a slice edge
+				cube.edgePermutation[i] = 4;
+				edgeIndex -= count;
+				remaining--;
+			}
+		}
+
+		CubeMove move;
+		for (int i = 0; i < 18; i++) {
+			int side = i % 6;
+			int amount = i / 6 + 1;
+
+			move.side = static_cast<CubeSide>(side);
+			move.amount = amount;
+
+			if (move.amount != 2 && (move.side == FRONT || move.side == BACK)) {
+				continue;
+			}
+
+			Cube newCube = cube.clone();
+
+			newCube.rotateSide(&move);
+
+			int cornerValue = 0;
+
+			for (int i = 0; i < 7; i++) {
+				cornerValue *= 3;
+				cornerValue += newCube.cornerOrientation[i];
+			}
+
+			int edgeValue = 0;
+			int edgeNumber = 4;
+
+			for (int i = 0; i < 12; i++) {
+				int currentEdge = newCube.edgePermutation[i];
+
+				if (currentEdge >= 4 && currentEdge <= 7) {
+					edgeValue += nCr(11 - i, edgeNumber);
+					edgeNumber--;
+				}
+			}
+
+			int t = cornerValue * 495 + edgeValue;
+
+			if (g2Distance[t] == -1) {
+				g2Distance[t] = lastDist + 1;
+				sq.push(t);
+			}
+		}
+	}
+
+	writePruningTable(g2Distance, 1082565, "./tables/thistleg2");
 }

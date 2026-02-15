@@ -448,6 +448,10 @@ std::string Cube::thistlethwaiteGroup1(int *pruningTable, int depth,
 			}
 		}
 
+		if (solution == "") {
+			return " ";
+		}
+
 		return solution.substr(1, solution.length());
 	} else if (depth > 0) {
 		int t = 0;
@@ -496,12 +500,15 @@ std::string Cube::thistlethwaiteGroup1(int *pruningTable, int depth,
 
 // Solve the cube using Thistlethwaite's algorithm.
 void Cube::thistlethwaite() {
+	generateThistlethwaiteTables();
+	return;
 	int g1[2048];
 	loadPruningTable("./tables/thistleg1", g1, 2048);
 
 	for (int i = 0; i < 13; i++) {
 		std::string solution = thistlethwaiteGroup1(g1, i, "", NONE);
 		if (solution != "") {
+			std::cout << "Solved phase 1 using " << solution << std::endl;
 			executeMoves(solution);
 			break;
 		}

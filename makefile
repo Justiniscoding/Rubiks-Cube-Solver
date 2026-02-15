@@ -14,7 +14,7 @@ compile: $(MAIN)
 	$(COMPILER) $(FLAGS) $(NAME) $(MAIN) $(filter-out ./src/main.cpp,$(wildcard ./src/*.cpp))
 
 debug:
-	$(COMPILER) $(FLAGS) $(NAME) $(MAIN) $(filter-out ./src/main.c,$(wildcard ./src/*.c)) -gdwarf-4
+	$(COMPILER) $(FLAGS) $(NAME) $(MAIN) $(filter-out ./src/main.cpp,$(wildcard ./src/*.cpp)) -gdwarf-4 -g
 	lldb ./$(NAME)
 
 clean:
