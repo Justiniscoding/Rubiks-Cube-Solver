@@ -1,5 +1,4 @@
 #include "cube.h"
-#include "pruning.h"
 
 int main(int argc, char *argv[]) {
 	Cube rubiksCube = Cube::create();

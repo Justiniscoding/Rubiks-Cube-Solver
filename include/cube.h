@@ -55,6 +55,8 @@ struct Cube {
 	void thistlethwaite();
 	std::string thistlethwaiteGroup1(int *pruningTable, int depth,
 									 std::string solution, CubeSide lastSide);
+	std::string thistlethwaiteGroup2(int *pruningTable, int depth,
+									 std::string solution, CubeSide lastSide);
 	void kociemba();
 
 	void print();

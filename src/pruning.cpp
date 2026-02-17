@@ -20,10 +20,11 @@ void writePruningTable(int *pruningTable, int tableSize, const char *fileName) {
 
 	file.close();
 
-	std::cout << "Successfully wrote to pruning table!\n";
+	std::cout << "Successfully wrote to pruning table at " << fileName << "!"
+			  << std::endl;
 }
 
-void loadPruningTable(const char *fileName, int *table, int tableSize) {
+void loadPruningTable(int *table, int tableSize, const char *fileName) {
 	std::ifstream file(fileName);
 
 	if (!file.is_open()) {
@@ -55,6 +56,9 @@ void loadPruningTable(const char *fileName, int *table, int tableSize) {
 			}
 		}
 	}
+
+	std::cout << "Successfully loaded pruning table at " << fileName << "!"
+			  << std::endl;
 }
 
 long factorial(int n) {
@@ -154,12 +158,12 @@ void generateThistlethwaiteTables() {
 		int s = 0;
 
 		for (int i = 6; i >= 0; i--) {
-			cube.cornerOrientation[i] = num % 2;
+			cube.cornerOrientation[i] = cornerIndex % 3;
 			s -= cube.cornerOrientation[i];
 			if (s < 0) {
-				s += 2;
+				s += 3;
 			}
-			num /= 2;
+			cornerIndex /= 3;
 		}
 		cube.cornerOrientation[7] = s;
 
