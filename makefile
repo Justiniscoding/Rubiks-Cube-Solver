@@ -1,8 +1,11 @@
 COMPILER = clang++
-# FLAGS = $(shell pkg-config --libs --cflags raylib) -I./include -o
 FLAGS = -I ./include -o
 NAME = RubiksCubeSolver
 MAIN = ./src/main.cpp
+
+# arduino_compile:
+# 	arduino-cli compile --fqbn arduino:avr:mega arduino
+# 	arduino-cli upload --fqbn arduino:avr:mega arduino -p /dev/cu.usbmodem11101
 
 test:
 	make clean
