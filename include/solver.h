@@ -11,7 +11,10 @@ struct Solver {
 
 	ThistlethwaiteGroup1 g1;
 	ThistlethwaiteGroup2 g2;
+	ThistlethwaiteGroup3 g3;
 
 	void init(SolverMode solverMode, bool generateTables);
 	std::string solveCube(Cube cube);
+
+	void destroy();
 };

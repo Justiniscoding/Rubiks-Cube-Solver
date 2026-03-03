@@ -3,11 +3,14 @@
 #include "cube.h"
 #include "helpers.h"
 #include "pruning.h"
+#include <cstdint>
 #include <queue>
 
 class Group {
   public:
-	int *pruningTable;
+	uint8_t *pruningTable;
+	int tableSize;
+	int startingPosition = 0;
 
 	virtual int encode(Cube *cube) { return 0; };
 	virtual void decode(int index, Cube *cube) {};
@@ -116,13 +119,14 @@ class Group {
 	};
 
 	void loadTable(int tableSize, const char *fileName) {
-		pruningTable = new int[tableSize];
+		pruningTable = new uint8_t[tableSize];
 		loadPruningTable(pruningTable, tableSize, fileName);
 	}
 };
 class ThistlethwaiteGroup1 : public Group {
   public:
 	int tableSize = 2048;
+
 	int encode(Cube *cube) {
 		int t = 0;
 
@@ -162,8 +166,8 @@ class ThistlethwaiteGroup1 : public Group {
 
 class ThistlethwaiteGroup2 : public Group {
   public:
-	int startingPosition = 69;
 	int tableSize = 1082565;
+	int startingPosition = 69;
 
 	int encode(Cube *cube) {
 		int cornerValue = 0;
@@ -250,4 +254,8 @@ class ThistlethwaiteGroup2 : public Group {
 
 		return true;
 	}
+};
+
+class ThistlethwaiteGroup3 : public Group {
+  public:
 };

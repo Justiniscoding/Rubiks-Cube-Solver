@@ -19,6 +19,7 @@ int main(int argc, char *argv[]) {
 	end = clock();
 	printf("It took %f seconds to solve all of the cubes!\n",
 		   (double)(end - start) / CLOCKS_PER_SEC);
+	cubeSolver.destroy();
 
 	return 0;
 }

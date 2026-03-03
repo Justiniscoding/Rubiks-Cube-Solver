@@ -1,9 +1,10 @@
 #include "pruning.h"
+#include <cstdint>
 #include <fstream>
 #include <iostream>
 
 void writePruningTable(int *pruningTable, int tableSize, const char *fileName) {
-	std::ofstream file(fileName);
+	std::ofstream file(fileName, std::ios::out | std::ios::binary);
 
 	if (!file.is_open()) {
 		std::cout << "Error while opening pruning table!\n";
@@ -13,7 +14,7 @@ void writePruningTable(int *pruningTable, int tableSize, const char *fileName) {
 	for (int i = 0; i < tableSize; i++) {
 		int value = pruningTable[i];
 
-		file << i << "," << value << ";";
+		file.write((char *)&pruningTable[i], 4);
 	}
 
 	file.close();
@@ -22,38 +23,16 @@ void writePruningTable(int *pruningTable, int tableSize, const char *fileName) {
 			  << std::endl;
 }
 
-void loadPruningTable(int *table, int tableSize, const char *fileName) {
-	std::ifstream file(fileName);
+void loadPruningTable(uint8_t *table, int tableSize, const char *fileName) {
+	std::ifstream file(fileName, std::ios::in | std::ios::binary);
 
 	if (!file.is_open()) {
 		std::cout << "Error while opening pruning table!\n";
 		return;
 	}
 
-	char character;
-
-	std::string key = "";
-	std::string value = "";
-
-	int stage = 0;
-
-	while (file.get(character)) {
-		if (stage == 0) {
-			if (character == ',') {
-				stage++;
-			} else {
-				key += character;
-			}
-		} else {
-			if (character == ';') {
-				stage = 0;
-				table[std::stoi(key)] = std::stoi(value);
-				key = "";
-				value = "";
-			} else {
-				value += character;
-			}
-		}
+	for (int i = 0; i < tableSize; i++) {
+		file.read((char *)&table[i], 4);
 	}
 
 	std::cout << "Successfully loaded pruning table at " << fileName << "!"

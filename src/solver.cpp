@@ -7,12 +7,15 @@ void Solver::init(SolverMode solverMode, bool generateTables) {
 
 	if (solverMode == THISTLETHWAITE) {
 		if (generateTables) {
-			g1.generatePruningTable(2048, 0, "./tables/thistleg1");
-			g2.generatePruningTable(1082565, 69, "./tables/thistleg2");
+			g1.generatePruningTable(g1.tableSize, g1.startingPosition,
+									"./tables/thistleg1");
+			g2.generatePruningTable(g2.tableSize, g2.startingPosition,
+									"./tables/thistleg2");
+			// g3.generatePruningTable(1082565, 0, "./tables/thistleg3");
 		}
 
-		g1.loadTable(2048, "./tables/thistleg1");
-		g2.loadTable(1082565, "./tables/thistleg2");
+		g1.loadTable(g1.tableSize, "./tables/thistleg1");
+		g2.loadTable(g2.tableSize, "./tables/thistleg2");
 	}
 
 	std::cout << "Cube solver successfully initialized!" << std::endl;
@@ -48,4 +51,10 @@ std::string Solver::solveCube(Cube cube) {
 	}
 
 	return fullSolution;
+}
+
+void Solver::destroy() {
+	delete[] g1.pruningTable;
+	delete[] g2.pruningTable;
+	// delete[] g3.pruningTable;
 }
