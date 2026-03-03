@@ -51,13 +51,7 @@ struct Cube {
 						 uint8_t edge4);
 	void executeMoves(std::string moves);
 	void randomScramble();
-
-	void thistlethwaite();
-	std::string thistlethwaiteGroup1(int *pruningTable, int depth,
-									 std::string solution, CubeSide lastSide);
-	std::string thistlethwaiteGroup2(int *pruningTable, int depth,
-									 std::string solution, CubeSide lastSide);
-	void kociemba();
+	std::string randomScramble(bool returnScramble);
 
 	void print();
 	void rotateSide(CubeMove *move);

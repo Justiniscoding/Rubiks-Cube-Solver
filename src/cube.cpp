@@ -1,5 +1,4 @@
 #include "cube.h"
-#include "pruning.h"
 #include <cstddef>
 #include <cstdint>
 #include <cstdlib>
@@ -436,178 +435,23 @@ void Cube::randomScramble() {
 		rotateSide(&move);
 	}
 }
+std::string Cube::randomScramble(bool returnScramble) {
+	std::string scrambleString = "";
+	CubeMove lastMove;
 
-std::string Cube::thistlethwaiteGroup1(int *pruningTable, int depth,
-									   std::string solution,
-									   CubeSide lastSide) {
-	if (depth == 0) {
-		for (int i = 0; i < 12; i++) {
-			if (edgeOrientation[i] != 0) {
-				return "";
-			}
-		}
+	for (int i = 0; i < 20; i++) {
+		CubeMove move;
+		do {
+			move.amount = rand() % 3 + 1;
+			move.side = static_cast<CubeSide>(rand() % 6);
+		} while (!move.isCompatible(&lastMove));
 
-		if (solution == "") {
-			return " ";
-		}
+		lastMove = move;
 
-		return solution.substr(1, solution.length());
-	} else if (depth > 0) {
-		int t = 0;
+		scrambleString += " " + move.toString();
 
-		for (int i = 0; i < 11; i++) {
-			t *= 2;
-			t += edgeOrientation[i];
-		}
-
-		if (pruningTable[t] <= depth) {
-			CubeMove move;
-
-			for (int i = 0; i < 18; i++) {
-				int side = i % 6;
-				int amount = i / 6 + 1;
-
-				// TODO: improve this by using a transition table instead of
-				// having to simulate a move for every possible branch. A
-				// transition table takes the encoded t value and turns it into
-				// a new one without having to create a new cube for every move.
-				move.side = static_cast<CubeSide>(side);
-
-				if (move.side == lastSide) {
-					continue;
-				}
-
-				move.amount = amount;
-
-				Cube newCube = clone();
-
-				newCube.rotateSide(&move);
-
-				std::string result = newCube.thistlethwaiteGroup1(
-					pruningTable, depth - 1, solution + " " + move.toString(),
-					move.side);
-
-				if (result != "") {
-					return result;
-				}
-			}
-		}
+		rotateSide(&move);
 	}
 
-	return "";
+	return scrambleString.substr(1, scrambleString.length());
 }
-
-std::string Cube::thistlethwaiteGroup2(int *pruningTable, int depth,
-									   std::string solution,
-									   CubeSide lastSide) {
-
-	if (depth == 0) {
-		for (int i = 0; i < 4; i++) {
-			int permutation = edgePermutation[i + 4];
-			if (permutation < 4 || permutation > 7) {
-				return "";
-			}
-		}
-
-		for (int i = 0; i < 8; i++) {
-			if (cornerOrientation[i] != 0) {
-				return "";
-			}
-		}
-
-		if (solution == "") {
-			return " ";
-		}
-
-		return solution.substr(1, solution.length());
-	} else if (depth > 0) {
-		int cornerValue = 0;
-
-		for (int i = 0; i < 7; i++) {
-			cornerValue *= 3;
-			cornerValue += cornerOrientation[i];
-		}
-
-		int edgeValue = 0;
-		int edgeNumber = 4;
-
-		for (int i = 0; i < 12; i++) {
-			int currentEdge = edgePermutation[i];
-
-			if (currentEdge >= 4 && currentEdge <= 7) {
-				edgeValue += nCr(11 - i, edgeNumber);
-				edgeNumber--;
-			}
-		}
-
-		int t = cornerValue * 495 + edgeValue;
-
-		if (pruningTable[t] <= depth) {
-			CubeMove move;
-
-			for (int i = 0; i < 18; i++) {
-				int side = i % 6;
-				int amount = i / 6 + 1;
-
-				move.side = static_cast<CubeSide>(side);
-				move.amount = amount;
-
-				// if (move.side == lastSide) {
-				// 	continue;
-				// }
-
-				if (move.amount != 2 &&
-					(move.side == FRONT || move.side == BACK)) {
-					continue;
-				}
-
-				Cube newCube = clone();
-
-				newCube.rotateSide(&move);
-
-				std::string result = newCube.thistlethwaiteGroup2(
-					pruningTable, depth - 1, solution + " " + move.toString(),
-					move.side);
-
-				if (result != "") {
-					return result;
-				}
-			}
-		}
-	}
-
-	return "";
-}
-
-// Solve the cube using Thistlethwaite's algorithm.
-
-void Cube::thistlethwaite() {
-	int g1[2048];
-	loadPruningTable(g1, 2048, "./tables/thistleg1");
-
-	int g2[1082565];
-	loadPruningTable(g2, 1082565, "./tables/thistleg2");
-
-	for (int i = 0; i < 7; i++) {
-		std::string solution = thistlethwaiteGroup1(g1, i, "", NONE);
-		if (solution != "") {
-			std::cout << "Solved phase 1 using " << solution << std::endl;
-			executeMoves(solution);
-			break;
-		}
-	}
-
-	print();
-
-	for (int i = 0; i < 11; i++) {
-		std::string solution = thistlethwaiteGroup2(g2, i, "", NONE);
-		if (solution != "") {
-			std::cout << "Solved phase 2 using " << solution << std::endl;
-			executeMoves(solution);
-			break;
-		}
-	}
-}
-
-// Solve the cube using Kociemba's algorithm.
-void Cube::kociemba() {}
